@@ -1,7 +1,6 @@
 import React from 'react';
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
-// 1. Import the extendTheme function
-import { extendTheme } from '@chakra-ui/react'
+import { BrowserRouter } from 'react-router-dom'
 import * as ReactDOM from 'react-dom/client'
 import App from './App';
 import theme from './theme';
@@ -14,7 +13,9 @@ ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ChakraProvider>
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+    <BrowserRouter>
       <App />
+    </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>,
 )
