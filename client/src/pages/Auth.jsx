@@ -10,61 +10,12 @@ import {
   Tab,
   TabPanels,
   TabPanel,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Button,
-  Icon,
-  FormControl,
-  FormHelperText,
-  FormErrorMessage,
 } from "@chakra-ui/react";
-import { ViewOffIcon, ViewIcon } from "@chakra-ui/icons";
-import React, { useState } from "react";
+import React from "react";
 import Background from "../assets/login2.png";
-import Victory from "../assets/victory.svg";
 import { Login, Signup } from "../components";
 
 export default function Auth() {
-  const [show, setShow] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError,setIsError] = useState(false);
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
-  const [signupData, setSignupData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    if (loginData.email === "" || loginData.password === "") {
-      return; // You should have validation logic here
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  };
-
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    if (
-      signupData.email === "" ||
-      signupData.password === "" ||
-      signupData.confirmPassword === ""
-    ) {
-      return; // Handle validation before submission
-    }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  };
 
   return (
     <Box
