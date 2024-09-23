@@ -1,41 +1,80 @@
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { Button, FormControl, Icon, Input, InputGroup, InputRightElement, useToast } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  FormControl,
+  Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
+  useToast,
+} from "@chakra-ui/react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-      const [loginData,setLoginData] = useState({
-            email:'',
-            password:''
-      })
-      const toast = useToast();
-      const id = 'toast-id';
-      const [isLoading, setIsLoading] = useState(false);
-      const [show, setShow] = useState(false);
-      const handleLogin = async (e) => {
-        e.preventDefault();
-        if(loginData.email === "" || loginData.password === "") {
-          if(!toast.isActive(id)){
-            toast({
-              id: id,
-              title: 'All fields are required',
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            })
-          }
-          return;
-        }
-        setIsLoading(true);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 3000);
-      };
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  const toast = useToast();
+  const id = "toast-id";
+  const [isLoading, setIsLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const navigate = useNavigate();
 
-      const handleChange = (e)=>{
-            setLoginData((prev)=>({...prev,[e.target.id]:e.target.value}))
+  const toaster = (title, status) => {
+    if (!toast.isActive(id)) {
+      toast({
+        id,
+        title,
+        status,
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const validation = () => {
+    if (!loginData.email.length || !loginData.password.length) {
+      toaster("All fields are required", "error");
+      return false;
+    }
+    return true;
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!validation()) return;
+    try {
+      setIsLoading(true);
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_URI}/api/auth/login`,
+        loginData,
+        {
+          withCredentials: true,
+        }
+      )
+      if(res.status === 200){
+        setIsLoading(false);
+        if(res.data.user.profileSetup) navigate('/chat');
+        else navigate('/profile');
+      }else{
+        setIsLoading(false);
+        toaster(res.data.message, "error");
       }
+      
+    } catch (error) {
+      setIsLoading(false);
+      toaster(error.response.data.message, "error");
+    }
+  };
+
+  const handleChange = (e) => {
+    setLoginData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
   return (
-      <form onSubmit={handleLogin}>
+    <form onSubmit={handleLogin}>
       <FormControl>
         <Input
           type="email"
@@ -43,7 +82,7 @@ export default function Login() {
           rounded="full"
           value={loginData.email}
           onChange={handleChange}
-          id='email'
+          id="email"
         />
       </FormControl>
 
@@ -55,8 +94,7 @@ export default function Login() {
           rounded="full"
           value={loginData.password}
           onChange={handleChange}
-          id='password'
-          
+          id="password"
         />
         <InputRightElement width="4.5rem">
           <Icon
@@ -78,5 +116,5 @@ export default function Login() {
         Login
       </Button>
     </form>
-  )
+  );
 }

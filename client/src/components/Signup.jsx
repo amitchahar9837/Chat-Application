@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 export default function Login() {
   const [signupData, setLoginData] = useState({
     email: "",
@@ -20,75 +22,59 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+
+  const toaster = (title, status) => {
+    if (!toast.isActive(id)) {
+      toast({
+        id,
+        title,
+        status,
+        duration:5000,
+        isClosable: true,
+      });
+    }
+  }
+  const validation = () =>{
+    if(!signupData.email.length || !signupData.password.length || !signupData.confirmPassword.length){
+        toaster("All fields are required", "error");
+        return false;
+    }
+    else if(signupData.password !== signupData.confirmPassword){
+        toaster("Passwords do not match", "error");
+        return false;
+    }
+    return true;
+  }
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (
-      signupData.email === "" ||
-      signupData.password === "" ||
-      signupData.confirmPassword === ""
-    ) {
-      if (!toast.isActive(id)) {
-        toast({
-          id: id,
-          title: "All fields are required",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+    if (!validation()) {
       return;
     }
-    if (signupData.password !== signupData.confirmPassword) {
-      if (!toast.isActive(id)) {
-        toast({
-          id: id,
-          title: "Passwords do not match",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-      return;
-    }
-    setIsLoading(true);
+    
     try {
+      setIsLoading(true);
       const request = await axios.post(
         `${import.meta.env.VITE_SERVER_URI}/api/auth/signup`,
         signupData, {
           withCredentials: true
         }
       );
-      if (request) {
+
+      if(request.status === 201){
         setIsLoading(false);
-        toast({
-          id: id,
-          title: "Signup Successful",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        console.log(request.data);
-      } else {
+        toaster(request.data.message, "success");
+        navigate('/profile');
+      }else{
         setIsLoading(false);
-        toast({
-          id: id,
-          title: "Signup Failed",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+        toaster(request.data.message, "error");
       }
+
     } catch (error) {
       setIsLoading(false);
-      toast({
-        id: id,
-        title: error.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toaster(error.response.data.message, "error");
     }
-  };
+  }
 
   const handleChange = (e) => {
     setLoginData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
