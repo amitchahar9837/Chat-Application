@@ -3,14 +3,14 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-
+import authRoutes from './routes/Auth.routes.js';
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser)
+app.use(cookieParser())
 app.use(cors({
       origin: process.env.origin,
       credentials: true,
@@ -24,12 +24,15 @@ mongoose.connect(process.env.MONGO_URI).then(() =>{
       console.log(error)
 })
 
+app.use('/api/auth',authRoutes);
+
+
 app.use((err, req, res, next) => {
-      const status = err.status || 500;
+      const statusCode = err.statusCode || 500;
       const message = err.message || "Internal Server Error";
-      res.status(status).send({
+      res.status(statusCode).json({
             success: false,
-            status,
+            statusCode,
             message
       });
 })

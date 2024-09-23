@@ -1,5 +1,5 @@
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { Button, FormControl, Icon, Input, InputGroup, InputRightElement } from '@chakra-ui/react'
+import { Button, FormControl, Icon, Input, InputGroup, InputRightElement, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 
 export default function Login() {
@@ -7,12 +7,23 @@ export default function Login() {
             email:'',
             password:''
       })
+      const toast = useToast();
+      const id = 'toast-id';
       const [isLoading, setIsLoading] = useState(false);
       const [show, setShow] = useState(false);
       const handleLogin = async (e) => {
         e.preventDefault();
         if(loginData.email === "" || loginData.password === "") {
-          return; // You should have validation logic here
+          if(!toast.isActive(id)){
+            toast({
+              id: id,
+              title: 'All fields are required',
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            })
+          }
+          return;
         }
         setIsLoading(true);
         setTimeout(() => {
