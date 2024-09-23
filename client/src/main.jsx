@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import * as ReactDOM from 'react-dom/client'
 import App from './App';
 import theme from './theme';
-
+import { Provider } from 'react-redux'
+import { store } from './redux/store';
 
 // 3. Pass the `theme` prop to the `ChakraProvider`
 
@@ -13,8 +14,10 @@ ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ChakraProvider>
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-    <BrowserRouter>
+    <BrowserRouter>      
+    <Provider store={store}>
       <App />
+    </Provider>
     </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>,
