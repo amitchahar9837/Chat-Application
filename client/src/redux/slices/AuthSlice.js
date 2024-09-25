@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const AuthSlice = createSlice({
     name: "auth",
     initialState: {
-        user: null,
+        user: null, 
     },
     reducers: {
         setUser: (state, action) => {

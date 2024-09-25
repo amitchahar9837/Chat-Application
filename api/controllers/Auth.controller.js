@@ -46,6 +46,7 @@ export const login = async(req,res,next) =>{
             const user = jwt.sign({id:existUser._id, email:existUser.email}, process.env.JWT_KEY);
             
             const {password:_, ...rest} = existUser._doc;
+            console.log(rest)
             res.cookie('user', user, {
                   httpOnly: true
             }).json({message:"Login Successful", user:rest});

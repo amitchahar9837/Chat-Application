@@ -1,21 +1,25 @@
-import { useColorMode, useColorModeValue } from '@chakra-ui/react'
 import React from 'react'
 import { Auth, Chat, Profile } from './pages'
 import { Navigate, Route, Routes } from 'react-router-dom'
-
+import { useSelector } from 'react-redux'
 
 export default function App() {
 
-  const { colorMode, toggleColorMode } = useColorMode()
+  const user = useSelector((state) => state.auth.user);
 
-  const bg = useColorModeValue('red.500','red.100')
-  const color = useColorModeValue('white', 'black')
+  const isAuth = user ? true : false;
+  const PrivateRoute = ({children}) => {
+    return isAuth ? children : <Navigate to='/auth' />
+  }
+  const NavigateRoute = ({children}) => {
+    return isAuth ? <Navigate to='/chat' /> : children
+  }
   return (
     <>
       <Routes>
-        <Route path='/auth' element={<Auth/>}  />
-        <Route path='/chat' element={<Chat/>}  />
-        <Route path='/profile' element={<Profile/>}  />
+        <Route path='/chat' element={<PrivateRoute><Chat/></PrivateRoute>} />
+        <Route path='/profile' element={<PrivateRoute><Profile/></PrivateRoute>} />
+        <Route path='/auth' element={<NavigateRoute><Auth/></NavigateRoute>}  />
         <Route path='*' element={<Navigate to='/auth' />} />
       </Routes>
     </>

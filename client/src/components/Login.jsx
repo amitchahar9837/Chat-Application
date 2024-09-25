@@ -10,7 +10,9 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setUser } from "../redux/slices/AuthSlice";
 
 export default function Login() {
   const [loginData, setLoginData] = useState({
@@ -22,6 +24,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const toaster = (title, status) => {
     if (!toast.isActive(id)) {
@@ -57,6 +60,7 @@ export default function Login() {
       )
       if(res.status === 200){
         setIsLoading(false);
+        dispatch(setUser(res.data.user));
         if(res.data.user.profileSetup) navigate('/chat');
         else navigate('/profile');
       }else{
