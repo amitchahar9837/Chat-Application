@@ -40,13 +40,17 @@ export default function ChatTopHeader({ user, isOnline, onDeleteChat }) {
 
   useEffect(() => {
     if (!socket || !selectedUser) return;
-
+    
     const handleTyping = (s) => {
-      setIsTyping(true);
+      if(s.senderId === selectedUser._id){
+        setIsTyping(true);
+      }
     };
-
+    
     const handleStopTyping = (e) => {
-      setIsTyping(false);
+      if(e.senderId === selectedUser._id){
+        setIsTyping(false);
+      }
     };
 
     socket.on("typing", handleTyping);
